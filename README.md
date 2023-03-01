@@ -1,7 +1,8 @@
 # Predicting Personalities with Natural Language Processing
 
 The goal of this project is to model an individual's personality traits using NLP algorithms on their written responses.
-This project uses a dataset from OK cupid users [link](https://www.kaggle.com/datasets/andrewmvd/okcupid-profiles)
+This project uses a dataset from OK cupid users
+[dataset link](https://www.kaggle.com/datasets/andrewmvd/okcupid-profiles)
 
 ### Personality Traits Framework: Five-Factor *OCEAN* Model of Personality
 
