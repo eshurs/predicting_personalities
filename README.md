@@ -12,3 +12,6 @@ The basis of personality traits used for this project are derived from the Five-
 The five personality traits in question are described below:
 
 ![image](https://user-images.githubusercontent.com/28024140/222189312-4aa9e6bb-72fa-4330-ba88-b026df7a56f4.png)
+
+
+Because the dataset in question contains written responses from users usinga. dating app to describe themselves to potential suitors, this project will focus on the traits of Concientiousness, Extraversion, and Agreeableness, as these seem most prevalent in the interplay romantic relationships.
