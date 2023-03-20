@@ -4,45 +4,23 @@ import pandas as pd
 import numpy
 import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set_style('darkgrid')
+sns.set_style('whitegrid')
 import time
 import os
+from loading import *
 
 # Clear terminal at the start for easier reading
 os.system('cls' if os.name == 'nt' else 'clear')
-
-# Import OK Cupid user data
-df = pd.read_csv('users.csv')
-
-# ASCII loading animation for UI/UX
-def loading(i,process_name=None):
-    load_symbols = [' | ',' / ',' -',' \ ',' -']
-    print(f'Loading {process_name} {load_symbols[i%len(load_symbols)]}')
-    time.sleep(0.5)
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-# Calculate Sentiment Scores using VADER Approach
-def polarity_analysis():
-    from nltk.sentiment import SentimentIntensityAnalyzer
-    sia = SentimentIntensityAnalyzer()
-    user = int(input(f"Which user would you like to score? Enter a number 1-{len(df)+1}\n"))
-    score = {"neg":0, "neu":0, "pos":0}
-    for n in range(10): 
-        new_score = sia.polarity_scores(str(df.iloc[user-1][f"essay{n}"]))
-        for key in score:
-            score[key] += new_score[key]
-        loading(n)
-    score = pd.DataFrame.from_dict([score])
-    fig, ax = plt.subplots()
-    ax = sns.barplot(data=score)
-    fig.suptitle(f"Sentiment Score for User {user}")
-    plt.show()
 
 ############################################################
 # ###        Calculate Personality Trait Weights:        ###
 # ### Conscientiousness, Extraversion, and Agreeableness ###
 ############################################################
 
+# Import OK Cupid user data
+print('Loading and cleaning data')
+df = pd.read_csv('users.csv')
+# Import test questions
 trait_test = pd.read_csv('data-final.csv', delim_whitespace=True) # file was space-seperated
 all_cols = trait_test.columns.tolist()
 questions = all_cols[0:all_cols.index('OPN10_E')+1]
@@ -55,7 +33,7 @@ csn_qs = []
 ext_qs = []
 agr_qs = []
 est_qs = []
-
+print("Creating traits questions list")
 with open('codebook.txt') as question_text:
     for line in question_text.readlines():
         if line[0:3] == 'OPN':
@@ -82,7 +60,8 @@ non_csn_qs = []
 non_ext_qs = []
 non_agr_qs = []
 non_est_qs = []
-print("loading data & nlp models")
+
+
 for i in range(1,5):
     non_opn_qs.append(opn_qs.pop(i))
     non_csn_qs.append(csn_qs.pop(i))
@@ -100,7 +79,6 @@ for i in range(3):
 
 ##################
 
-
 # Compare sentance similarity using spacy's nlp english-trained model
 def sentence_comparer(q_sent, user_sent):
     q_sent = nlp(q_sent)
@@ -108,8 +86,8 @@ def sentence_comparer(q_sent, user_sent):
         user_sent = nlp(user_sent)
         return q_sent.similarity(user_sent) 
     except TypeError:
-        print("Inputted Text was not a string")
-
+        # print("Inputted Text was not a string")
+        pass
 
 # Turn essay into list of questions & clean sentence from newline and other characters
 def para_to_sents(para):
@@ -124,14 +102,13 @@ def para_to_sents(para):
     except UserWarning:
         pass
     except TypeError:
-        print("Inputted text was not a string")
-
+        # print("Inputted text was not a string")
+        pass
 
 
 # Function that will create and visualize personality trait scores of inputted text
 import time
 # Initialize scores, total sentances to 0
-
 opn = 0
 csn = 0
 ext = 0
@@ -144,48 +121,70 @@ non_agr = 0
 non_est = 0
 total_sents = 0
 start = time.time()
-para = input('Tell me about yourself; input a paragraph (at least 3 sentences) in order to score emergent personality traits:\n')
-para = para_to_sents(para)
-print(f'your sentences are: {para}')
+
+print("Loading spacy nlp models")
 import spacy
 nlp = spacy.load("en_core_web_lg")
-print('finished loading spacy nlp model')
-try:
-    for user_sent in para:
-        total_sents += 1
-        print(f'analyzing sentence {total_sents}')
-        # Openness
-        for q_sent in opn_qs:
-            opn += sentence_comparer(q_sent, user_sent)
-        for q_sent in non_opn_qs:
-            non_opn += sentence_comparer(q_sent, user_sent)
-        # Conscientiousness
-        for q_sent in csn_qs:
-            csn += sentence_comparer(q_sent, user_sent)
-        for q_sent in non_csn_qs:
-            non_csn += sentence_comparer(q_sent, user_sent)
-        # Extroverted
-        for q_sent in ext_qs:
-            ext += sentence_comparer(q_sent, user_sent)
-        for q_sent in non_ext_qs:
-            non_ext += sentence_comparer(q_sent, user_sent)
-        # Agreeable
-        for q_sent in agr_qs:
-            agr += sentence_comparer(q_sent, user_sent)
-        for q_sent in non_agr_qs:
-            non_agr += sentence_comparer(q_sent, user_sent)
-        # Emotionally Stable
-        for q_sent in est_qs:
-            est += sentence_comparer(q_sent, user_sent)
-        for q_sent in non_est_qs:
-            non_est += sentence_comparer(q_sent, user_sent)
+print('Finished loading spacy nlp model')
+
+# User Input of text
+# para = input('Tell me about yourself; input a paragraph (at least 3 sentences) in order to score emergent personality traits:\n')
+# para = para_to_sents(para)
+# print(f'your sentences are: {para}')
+
+ess_cols = df.columns.tolist()
+user = 100
+if os.path.exists('user_responses.txt'):
+    os.remove('user_responses.txt')
+
+for es in range(10):
+    para = para_to_sents(df[f'essay{es}'][user])
+    with open('user_responses.txt','a') as file:
+        file.write(f'Essay {es+1}:\n\n')
+    try:
+        for user_sent in para:
+            with open('user_responses.txt','a') as file:
+                file.write(user_sent+'\n')
+            total_sents += 1
+            # Openness
+            for q_sent in opn_qs:
+                opn += sentence_comparer(q_sent, user_sent)
+            for q_sent in non_opn_qs:
+                non_opn += sentence_comparer(q_sent, user_sent)
+            # Conscientiousness
+            for q_sent in csn_qs:
+                csn += sentence_comparer(q_sent, user_sent)
+            for q_sent in non_csn_qs:
+                non_csn += sentence_comparer(q_sent, user_sent)
+            # Extroverted
+            for q_sent in ext_qs:
+                ext += sentence_comparer(q_sent, user_sent)
+            for q_sent in non_ext_qs:
+                non_ext += sentence_comparer(q_sent, user_sent)
+            # Agreeable
+            for q_sent in agr_qs:
+                agr += sentence_comparer(q_sent, user_sent)
+            for q_sent in non_agr_qs:
+                non_agr += sentence_comparer(q_sent, user_sent)
+            # Emotionally Stable
+            for q_sent in est_qs:
+                est += sentence_comparer(q_sent, user_sent)
+            for q_sent in non_est_qs:
+                non_est += sentence_comparer(q_sent, user_sent)
             
-except TypeError:
-    print("Inputted text was not a string")
+            loading(total_sents, f'sentance {total_sents} (essay {es+1}/10)')
+ 
+    except TypeError:
+        # print("Inputted text was not a string")
+        pass
+   
+    with open('user_responses.txt','a') as file:
+        file.write('\n\n\n')
+
+###################        
 
 # Take average sentiment score over total number of sentances analyzed
-
-opn /= len(opn_qs) * total_sents
+opn /= len(opn_qs) * total_sents 
 csn /= len(csn_qs) * total_sents 
 ext /= len(ext_qs) * total_sents
 agr /= len(agr_qs) * total_sents
@@ -197,27 +196,33 @@ non_agr /= len(non_agr_qs) * total_sents
 non_est /= len(non_est_qs) * total_sents
 
 end = time.time()
+print('Sentance analysis complete')
+time.sleep(1)
 
-print('\n')     
-print(f"""Personality Trait Scores (+,-):\n
-Openness: {opn}, {non_opn}\n
-Conscienciousness: {csn}, {non_csn}\n
-Extrovertedness: {ext}, {non_ext}\n
-Agreeableness: {agr}, {non_agr}\n
-Emotional Stability: {est}, {non_est}
+# Clear terminal at the start for easier reading
+os.system('cls' if os.name == 'nt' else 'clear')     
+print(f"""Personality Trait Scores (+,-) (ranging from 0.0-1.0):\n
+Openness: {round(opn,2)}, {round(non_opn,2)}\n
+Conscienciousness: {round(csn,2)}, {round(non_csn,2)}\n
+Extrovertedness: {round(ext,2)}, {round(non_ext,2)}\n
+Agreeableness: {round(agr,2)}, {round(non_agr,2)}\n
+Emotional Stability: {round(est,2)}, {round(non_est,2)}
 """)
 print('\n')
-print(f'elapsed time: {round(end-start,1)}s (for {total_sents} sentences)')
 
+print(f'Elapsed time: {round(end-start,1)}s (for {total_sents} sentences)')
+print(f'See the file \'user_responses.txt\' for the written responses that were analyzed to generate these scores.')
+
+# Create new df with results of sentance analysis
 res_df = pd.DataFrame([
 ['Openness',opn, "+"],['Openness',non_opn,'-'], ['Conscienciousness',csn,'+'],['Conscienciousness',non_csn,'-'], 
     ['Extrovertedness',ext,'+'],['Extrovertedness', non_ext,'-'], ['Agreeableness',agr,'+'],['Agreeableness',non_agr,'-'], 
     ['Emotional Stability',est, '+'],['Emotional Stability',non_est,'-']],columns = ['trait','score','+/-'])
-# ix = pd.Index(['Openness', 'Conscienciousness', 'Extrovertedness', 'Agreeableness', 'Emotional Stability'])
-# res_df = res_df.set_index(ix)
+
+# assign colors based on +/- personality traits
 colors = ['blue' if res_df.iloc[row]['+/-']=='+' else 'red' for row in range(len(res_df))]
-print(colors)
 ax = sns.catplot(data=res_df, kind="bar", x='trait', y="score", hue="+/-", palette=colors)
 ax.set_xticklabels(rotation = 45)
-ax.set(ylim=(0, 1))
+ax.set(ylim=(res_df['score'].min()-0.02, res_df['score'].max()+0.02))
+ax.set(title = f'Personality Trait Scores for User {user}')
 plt.show()
