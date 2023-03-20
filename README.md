@@ -22,5 +22,5 @@ The five personality traits in question are described below:
 
 ### Project Application
 
-One of the proposed applications of this project is to breakdown the personality traits of users on a dating app so that they could be matched with other users with more compatability (see [OK Cupid Dataset](https://www.kaggle.com/datasets/andrewmvd/okcupid-profiles)). \nBelow is a possible user-facing visualization that would allow for a more transparent assessment of a proposed match so that all users can be more informed.
+One of the proposed applications of this project is to breakdown the personality traits of users on a dating app so that they could be matched with other users with more compatability (see [OK Cupid Dataset](https://www.kaggle.com/datasets/andrewmvd/okcupid-profiles)). <br />Below is a possible user-facing visualization that would allow for a more transparent assessment of a proposed match so that all users can be more informed.
 ![Figure_1](https://user-images.githubusercontent.com/28024140/226335205-0ddd2654-cc98-4951-929d-29be9ca2fb63.png)
