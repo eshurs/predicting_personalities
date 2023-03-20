@@ -13,9 +13,16 @@ The five personality traits in question are described below:
 
 ![image](https://user-images.githubusercontent.com/28024140/222189312-4aa9e6bb-72fa-4330-ba88-b026df7a56f4.png)
 
+*This project uses "Emotional Stability" as opposed to "Neuroticism" so that all traits can be visualized with the same a positive/negative attribute convention: 
+- Openness / Close-mindedness
+- Conscientious / Unconscientious
+- Extroverte / Introverted
+- Agreeable / Disagreeable
+- Emotionally Stable / Neurotic
 
 ### Project Application
 
 One of the proposed applications of this project is to breakdown the personality traits of users on a dating app so that they could be matched with other users with more compatability. 
-
 [OK Cupid Dataset](https://www.kaggle.com/datasets/andrewmvd/okcupid-profiles)
+Below is a possible user-facing visualization that would allow for a more transparent assessment of a proposed match so that all users can be more informed.
+![Figure_1](https://user-images.githubusercontent.com/28024140/226335205-0ddd2654-cc98-4951-929d-29be9ca2fb63.png)
