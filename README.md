@@ -32,4 +32,4 @@ One of the proposed applications of this project is to breakdown the personality
 <br />
 Below is a possible user-facing visualization that would allow for a more transparent assessment of a proposed match so that all users can be more informed.
 ![Figure_1](https://user-images.githubusercontent.com/28024140/226335205-0ddd2654-cc98-4951-929d-29be9ca2fb63.png)
-*see user 100 responses here:* [user_responses.txt](https://github.com/eshurs/predicting_personalities/files/11017856/user_responses.txt)
+*see example user's responses here:* [user_responses.txt](https://github.com/eshurs/predicting_personalities/files/11017856/user_responses.txt)
